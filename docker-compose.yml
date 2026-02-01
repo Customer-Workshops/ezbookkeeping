@@ -1,0 +1,20 @@
+services:
+  ezbookkeeping:
+    build: .
+    image: ezbookkeeping
+    container_name: ezbookkeeping
+    ports:
+      - "8080:8080"
+    volumes:
+      - moneymanager:/ezbookkeeping/data
+      - ./log:/ezbookkeeping/log
+      - ./storage:/ezbookkeeping/storage
+      - ./conf:/ezbookkeeping/conf
+    restart: unless-stopped
+    # Environment variables can be added here if needed, matching ezbookkeeping.ini
+    # environment:
+    #   - EBK_DB_DSN=...
+
+volumes:
+  moneymanager:
+    external: true
