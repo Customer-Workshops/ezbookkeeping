@@ -214,6 +214,10 @@
                                     <span class="ms-1" v-if="fileType !== 'dsv' && fileType !== 'dsv_data'">{{ tt('How to export this file?') }}</span>
                                     <span class="ms-1" v-if="exportFileGuideDocumentLanguageName">[{{ exportFileGuideDocumentLanguageName }}]</span>
                                 </a>
+                                <a href="#" class="ms-3" :class="{ 'disabled': submitting }" @click.prevent="downloadTemplate" v-if="fileType === 'ezbookkeeping' && fileSubType === 'ezbookkeeping_csv'">
+                                    <v-icon :icon="mdiDownload" size="16" />
+                                    <span class="ms-1">{{ tt('Download Template') }}</span>
+                                </a>
                             </v-col>
                         </v-row>
                     </v-window-item>
@@ -324,8 +328,23 @@ import {
     mdiDotsVertical,
     mdiHelpCircleOutline,
     mdiClose,
-    mdiArrowRight
+    mdiArrowRight,
+    mdiDownload
 } from '@mdi/js';
+
+const EZBOOKKEEPING_TRANSACTION_DATA_CSV_HEADER = 'Time,Timezone,Type,Category,Sub Category,Account,Account Currency,Amount,Account2,Account2 Currency,Account2 Amount,Geographic Location,Tags,Description';
+
+function downloadTemplate(): void {
+    const blob = new Blob([EZBOOKKEEPING_TRANSACTION_DATA_CSV_HEADER], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ezbookkeeping_template.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
 
 type ConfirmDialogType = InstanceType<typeof ConfirmDialog>;
 type SnackBarType = InstanceType<typeof SnackBar>;
