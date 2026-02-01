@@ -11,8 +11,8 @@ services:
       - ./storage:/ezbookkeeping/storage
       - ./conf:/ezbookkeeping/conf
     restart: unless-stopped
-    # Environment variables can be added here if needed, matching ezbookkeeping.ini
-    # environment:
+    environment:
+      - EBK_SERVER_DOMAIN=192.168.1.8
     #   - EBK_DB_DSN=...
 
 volumes:
