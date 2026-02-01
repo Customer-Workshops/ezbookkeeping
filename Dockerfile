@@ -14,9 +14,11 @@ ENV CHECK_3RD_API=$CHECK_3RD_API
 ENV SKIP_TESTS=$SKIP_TESTS
 WORKDIR /go/src/github.com/mayswind/ezbookkeeping
 COPY . .
+RUN sed -i 's/\r$//' docker/backend-build-pre-setup.sh && chmod +x docker/backend-build-pre-setup.sh
 RUN docker/backend-build-pre-setup.sh
 RUN apk add git gcc g++ libc-dev
-RUN ./build.sh backend
+RUN sed -i 's/\r$//' build.sh && chmod +x build.sh
+RUN ./build.sh backend --no-test
 
 # Build frontend files
 FROM --platform=$BUILDPLATFORM node:24.12.0-alpine3.23 AS fe-builder
@@ -30,9 +32,11 @@ ENV BUILD_UNIXTIME=$BUILD_UNIXTIME
 ENV BUILD_DATE=$BUILD_DATE
 WORKDIR /go/src/github.com/mayswind/ezbookkeeping
 COPY . .
+RUN sed -i 's/\r$//' docker/frontend-build-pre-setup.sh && chmod +x docker/frontend-build-pre-setup.sh
 RUN docker/frontend-build-pre-setup.sh
 RUN apk add git
-RUN ./build.sh frontend
+RUN sed -i 's/\r$//' build.sh && chmod +x build.sh
+RUN ./build.sh frontend --no-test
 
 # Package docker image
 FROM alpine:3.23.2
@@ -40,7 +44,7 @@ LABEL maintainer="MaysWind <i@mayswind.net>"
 RUN addgroup -S -g 1000 ezbookkeeping && adduser -S -G ezbookkeeping -u 1000 ezbookkeeping
 RUN apk --no-cache add tzdata
 COPY docker/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 RUN mkdir -p /ezbookkeeping && chown 1000:1000 /ezbookkeeping \
   && mkdir -p /ezbookkeeping/data && chown 1000:1000 /ezbookkeeping/data \
   && mkdir -p /ezbookkeeping/log && chown 1000:1000 /ezbookkeeping/log \
